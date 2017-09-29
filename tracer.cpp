@@ -1,29 +1,43 @@
 #include "tracer.hpp"
 
 namespace Vlinder { namespace Tracing {
-void Tracer::TraceProxy::operator()(char const *fmt, ...) const
+void Tracer::TraceProxy::operator()(bool should_trace, unsigned int parts, char const *fmt, ...) const
 {
-	va_list ap;
-	va_start(ap, fmt);
-	tracer_->trace(filename_, line_, fmt, ap);
-	va_end(ap);
-
+	if (should_trace && ((tracer_->getMask() & parts) != 0))
+	{
+		va_list ap;
+		va_start(ap, fmt);
+		tracer_->trace(filename_, line_, fmt, ap);
+		va_end(ap);
+	}
+	else
+	{ /* ignore */ }
 }
-void Tracer::trace(char const *filename, int line, char const *fmt, ...)
+void Tracer::trace(bool should_trace, unsigned int parts, char const *filename, int line, char const *fmt, ...)
 {
-	va_list ap;
-	va_start(ap, fmt);
-	trace(filename, line, fmt, ap);
-	va_end(ap);
+	if (should_trace && ((mask_ & parts) != 0))
+	{
+		va_list ap;
+		va_start(ap, fmt);
+		trace(filename, line, fmt, ap);
+		va_end(ap);
+	}
+	else
+	{ /* ignore */ }
 }
-void Tracer::trace(char const *fmt, ...)
+void Tracer::trace(bool should_trace, unsigned int parts, char const *fmt, ...)
 {
-	va_list ap;
-	va_start(ap, fmt);
-	trace(fmt, ap);
-	va_end(ap);
+	if (should_trace && ((mask_ & parts) != 0))
+	{
+		va_list ap;
+		va_start(ap, fmt);
+		trace(fmt, ap);
+		va_end(ap);
+	}
+	else
+	{ /* ignore */ }
 }
 }}
 
-Vlinder::Tracing::Tracer * tracer__ __attribute__((weak)) (nullptr);
+Vlinder::Tracing::Tracer *tracer__ __attribute__((weak)) (nullptr);
 

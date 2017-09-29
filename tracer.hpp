@@ -15,7 +15,7 @@ public :
 			, line_(line)
 		{ /* no-op */ }
 
-		void operator()(char const *fmt, ...) const;
+		void operator()(bool should_trace, unsigned int parts, char const *fmt, ...) const;
 
 		Tracer *tracer_;
 		char const *filename_;
@@ -29,11 +29,17 @@ public :
 	Tracer& operator=(Tracer const &) = delete;
 	Tracer& operator=(Tracer &&) = default;
 
-	TraceProxy trace(char const *filename, int line) { return TraceProxy(this, filename, line); }
-	void trace(char const *filename, int line, char const *fmt, ...);
-	void trace(char const *fmt, ...);
+	void setMask(unsigned int mask) noexcept { mask_ = mask; };
+	unsigned int getMask() const noexcept { return mask_; }
+
+	TraceProxy trace(bool should_trace, unsigned int parts, char const *filename, int line) { return TraceProxy(this, filename, line); }
+	void trace(bool should_trace, unsigned int parts, char const *filename, int line, char const *fmt, ...);
+	void trace(bool should_trace, unsigned int parts, char const *fmt, ...);
 	virtual void trace(char const *filename, int line, char const *fmt, va_list args) = 0;
 	virtual void trace(char const *fmt, va_list args) = 0;
+
+private :
+	unsigned int mask_ = 0;
 };
 }}
 extern Vlinder::Tracing::Tracer *tracer__;
