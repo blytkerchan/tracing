@@ -22,13 +22,18 @@
 #define vlinder_tracing_stderrerrtracer_hpp
 
 #include "tracer.hpp"
+#include <mutex>
 
 namespace Vlinder { namespace Tracing {
 class StdErrTracer : public Tracer
 {
-public :
-	/*virtual */void trace(char const *filename, int line, char const *fmt, va_list args)/* = 0*/;
-	/*virtual */void trace(char const *fmt, va_list args)/* = 0*/;
+protected :
+	/*virtual */void trace(char const *fmt, va_list args) override/* = 0*/;
+	/*virtual */void lock() override/* = 0*/;
+	/*virtual */void unlock() override/* = 0*/;
+
+private :
+	std::mutex lock_;
 };
 }}
 

@@ -29,17 +29,28 @@ class Tracer
 public :
 	struct TraceProxy
 	{
-		TraceProxy(Tracer *tracer, char const *filename, int line)
+		TraceProxy(bool should_trace, unsigned int parts, Tracer *tracer)
 			: tracer_(tracer)
-			, filename_(filename)
-			, line_(line)
-		{ /* no-op */ }
+			, should_trace_(should_trace)
+			, parts_(parts)
+		{
+			tracer_->lock();
+		}
+		~TraceProxy()
+		{
+			tracer_->unlock();
+		}
+		TraceProxy(TraceProxy const&) = delete;
+		TraceProxy(TraceProxy&&) = default;
+		TraceProxy& operator=(TraceProxy const&) = delete;
+		TraceProxy& operator=(TraceProxy&&) = default;
 
-		void operator()(bool should_trace, unsigned int parts, char const *fmt, ...) const;
+		TraceProxy const& operator()(char const *fmt, ...) const;
+		TraceProxy const& operator()(char const *fmt, va_list args) const;
 
 		Tracer *tracer_;
-		char const *filename_;
-		int line_;
+		bool should_trace_;
+		unsigned int parts_;
 	};
 	Tracer() = default;
 	Tracer(Tracer const &) = delete;
@@ -52,11 +63,14 @@ public :
 	void setMask(unsigned int mask) noexcept { mask_ = mask; };
 	unsigned int getMask() const noexcept { return mask_; }
 
-	TraceProxy trace(bool should_trace, unsigned int parts, char const *filename, int line) { return TraceProxy(this, filename, line); }
+	TraceProxy trace(bool should_trace, unsigned int parts) { return TraceProxy(should_trace, parts, this); }
 	void trace(bool should_trace, unsigned int parts, char const *filename, int line, char const *fmt, ...);
 	void trace(bool should_trace, unsigned int parts, char const *fmt, ...);
-	virtual void trace(char const *filename, int line, char const *fmt, va_list args) = 0;
+
+protected :
 	virtual void trace(char const *fmt, va_list args) = 0;
+	virtual void lock() = 0;
+	virtual void unlock() = 0;
 
 private :
 	unsigned int mask_ = 0;
