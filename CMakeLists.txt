@@ -10,3 +10,12 @@ add_library(tracing SHARED
 	tracer.cpp
 	tracer.hpp
 	)
+set_target_properties(tracing PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(tracing PROPERTIES SOVERSION 1)
+install(
+	TARGETS tracing
+	ARCHIVE DESTINATION lib
+	LIBRARY DESTINATION lib
+	DESTINATION lib
+	)
+
