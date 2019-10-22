@@ -62,5 +62,9 @@ void Tracer::trace(bool should_trace, unsigned int parts, char const *fmt, ...)
 }
 }}
 
-Vlinder::Tracing::Tracer *tracer__ __attribute__((weak)) (nullptr);
+Vlinder::Tracing::Tracer *tracer__
+#ifdef __GNUC__
+    __attribute__((weak))
+#endif
+    (nullptr);
 

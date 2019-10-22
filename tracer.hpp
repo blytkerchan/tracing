@@ -21,13 +21,14 @@
 #ifndef vlinder_tracing_tracer_hpp
 #define vlinder_tracing_tracer_hpp
 
+#include "prologue.hpp"
 #include <cstdarg>
 
 namespace Vlinder { namespace Tracing {
-class Tracer
+class TRACING_API Tracer
 {
 public :
-	struct TraceProxy
+	struct TRACING_API TraceProxy
 	{
 		TraceProxy(bool should_trace, unsigned int parts, Tracer *tracer)
 			: tracer_(tracer)
@@ -76,6 +77,6 @@ private :
 	unsigned int mask_ = 0;
 };
 }}
-extern Vlinder::Tracing::Tracer *tracer__;
+extern TRACING_API Vlinder::Tracing::Tracer *tracer__;
 
 #endif

@@ -25,7 +25,7 @@
 #include <mutex>
 
 namespace Vlinder { namespace Tracing {
-class StdErrTracer : public Tracer
+class TRACING_API StdErrTracer : public Tracer
 {
 protected :
 	/*virtual */void trace(char const *fmt, va_list args) override/* = 0*/;
