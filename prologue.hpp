@@ -11,7 +11,7 @@
 #	else
 #		define TRACING_API
 #	endif
-#endif TRACING_API
+#endif
 
 #endif
 
